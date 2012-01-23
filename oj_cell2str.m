@@ -1,0 +1,75 @@
+function [str, colwidth] = oj_cell2str(x, varargin)
+% Converts a cell array table to a string.
+
+n = rows(x);
+m = cols(x);
+
+defaults.highlightf = []; % highlighting function
+defaults.precision = repmat({'%-7.5g'}, m, 1);
+defaults.maxwidth = 20;
+defaults.minwidth = repmat(5, 1, numel(x)); 
+args = propval(varargin, defaults);
+
+if ~iscell(args.precision)
+  args.precision = repmat({args.precision}, m, 1);
+end
+
+% Build up the output columnwise, assuming all elements in a column
+% are the same
+
+str = [];
+
+for i = 1:m
+  
+  if isstr(x{1,i})
+    col = strvcat(x{:,i});
+  elseif isstruct(x{1,i})
+    col = repmat('[struct]', n, 1);
+  elseif isnumeric(x{1,i})
+    
+      if (rows(x{1,i}) > 1)
+          col = repmat('[#r/m]', n, 1);
+      else
+          subcols = cols(x{1,i});
+          strf = repmat([args.precision{i} ' '], 1, subcols);
+          col = num2str(vertcat(x{:,i}), strf);
+      end      
+  elseif islogical(x{1,i})
+    col = num2str(vertcat(x{:,i}), '%d ');
+  end
+ 
+  if rows(col) ~= n
+    error('Cannot convert empty values.');
+  end
+  
+  colwidth(i) = cols(col);
+  if colwidth(i) > args.maxwidth
+    col = col(:,1:args.maxwidth);
+    col(:, end-2:end) = '.';    
+    colwidth(i) = args.maxwidth;
+  elseif colwidth(i) < args.minwidth(i)
+    padding = repmat(' ', n, args.minwidth(i) - colwidth(i));
+    col = [col padding];
+    colwidth(i) = args.minwidth(i);
+  end    
+
+  % Check for highlighting values in this column
+  if iscell(args.highlightf)
+    if ~isempty(args.highlightf{i})
+      f = arg2funct(args.highlightf{i});
+      h = f(vertcat(x{:,i}));
+      
+      oldcol = cols(col)-1;
+      col = horzcat(col, repmat(' ', rows(col), 13));
+
+      for j = 1:rows(col)
+        repstr = sprintf('{\\\\chcbpat%d %s} ', h(j), col(j,1:oldcol));
+        col(j,:) = repstr(1:cols(col));
+      end      
+    end    
+  end
+
+  str = [str repmat(' ', n, 1) col];
+
+end
+
