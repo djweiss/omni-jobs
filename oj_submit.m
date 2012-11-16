@@ -34,16 +34,52 @@ function oj_submit(jobsdir, varargin)
 %
 % See also OJ_WRITE, OJ_RESUBMIT, OJ_LOAD, OJ_QUICKBATCH.
 
-defaults.matlab_exec = 'matlab -nodisplay -nojvm';
+defaults.matlab_exec = 'matlab -nodisplay -nojvm -singleCompThread';
 defaults.matlab_startdir = 'auto';
 defaults.sleep = 0; % delay of submission between jobs
 defaults.maxsleep = 0; % stop sleeping after submitting this # of jobs
 defaults.filter = '*';
 defaults.dryrun = false;
 defaults.avoid = []; % node's to avoid
-defaults.qsubargs = '-q default@alef.seas.upenn.edu,default@bet.seas.upenn.edu,default@gimel.seas.upenn.edu,default@dalet.seas.upenn.edu'; %'-l mem=10G';
+defaults.q = 'a';
 
+opt_nodes = {'ahbar','hamus','kipod','nemia', 'snaim', 'samur'}; %,'samur'};  % snaim
+def_nodes = {'alef','bet', 'gimel','dalet'}; %,'hei','vav'};
+
+%defaults.qsubargs = ['-q "opterons,default"']; %['-q long-jobs']; %@alef.seas.upenn.edu;' ...
+    %'long-jobs@bet.seas.upenn.edu;' ...
+    %'long-jobs@gimel.seas.upenn.edu;' ...
+    %'long-jobs@dalet.seas.upenn.edu"' ];
+defaults.qsubargs = '';
 args = propval(varargin, defaults);
+
+q = args.q;
+queues = '';
+for i = 1:numel(opt_nodes)
+    if q ~= 'd'
+        queues = [queues 'long-jobs@' opt_nodes{i} ','];
+    end
+    if q == 'a' || q == 'd'
+        queues = [queues 'default@' opt_nodes{i} ','];
+    end
+    if q == 'a' || q == 'o' || q == 'd' || q == 'x'
+        queues = [queues 'opterons@' opt_nodes{i} ','];
+    end
+end
+for i = 1:numel(def_nodes)
+    if q ~= 'o' || q == 'x' || q == 'd' || q == 'a'
+        if q == 'l' || q == 'a' || q == 'x'
+            queues = [queues 'long-jobs@' def_nodes{i} ','];
+        end
+        if q == 'a' || q == 'd'
+            queues = [queues 'default@' def_nodes{i} ','];
+        end
+    end
+end
+queues = [ '"' queues(1:end-1) '"'];
+
+args.qsubargs = sprintf('%s -q %s', args.qsubargs, queues);
+
 [args] = validate(args);
 
 % Get a list of .opusjob files to run
@@ -159,8 +195,9 @@ outfile = [jobsdir '/stdout/' jobname];
 filename = [jobsdir '/shell/' jobname];
 
 qargs = sprintf('%s -V -e %s -o %s', args.qsubargs, errfile, outfile);
-cmdstr = sprintf('qsub %s %s', qargs, filename);
+cmdstr = sprintf('qsub %s %s', qargs, filename); %, filename);
 
+%fprintf('executing command: %s\n', cmdstr);
 [status, result] = unix(cmdstr);
 
 if status == 1

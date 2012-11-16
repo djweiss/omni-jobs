@@ -6,7 +6,8 @@ function [] = oj_quickbatch(funcname, varargin)
 [write_args varargin] = getpropval(varargin, 'write_args', {});
 [submit_args varargin] = getpropval(varargin, 'submit_args', {});
 [batchname varargin] = getpropval(varargin, 'batchname', [funcname '_batch']);
-[overwrite varargin] = getpropval(varargin, 'overwrite', true);
+[overwrite varargin] = getpropval(varargin, 'overwrite', false);
+[append varargin] = getpropval(varargin, 'append', false);
 [fixed_args varargin] = getpropval(varargin, 'fixed_args', {});
 jobnum = 1;
 
@@ -14,11 +15,20 @@ if exist(batchname, 'dir')
     if overwrite
         dispf('Batch ''%s'' already exists. Removing and overwriting...', batchname);
         unixf('rm -rf %s', batchname);
+    elseif append
+        jobfiles = dir(fullfile(batchname, 'jobs', [batchname '*']));
+        njobs = numel(jobfiles);
+        jobnum = jobnum + njobs;
+        dispf('Appending to existing batch ''%s'' with %d jobs...', batchname, njobs);
     else
-        dispf('Batch ''%s'' already exists. Incrementing jobnum...', ...
-              batchname);
-        jobnum = numel(dir(fullfile(batchname,'jobs'))) - 1;
-        dispf('Starting at job %d.', jobnum);
+        reply = input(sprintf('Batch ''%s'' already exists. Overwrite? (y/n)', batchname), 's');
+        if strcmp(reply, 'y')
+            overwrite = true;
+            unixf('rm -rf %s', batchname);
+        else
+            dispf('Aborting...');
+            return;
+        end
     end
 end
 

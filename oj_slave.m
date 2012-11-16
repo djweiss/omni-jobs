@@ -64,10 +64,10 @@ for i = 1:numel(jobs)
       % Run it
       log = 'Output not captured.';
       if args.logout 
-        fprintf('\tRunning silently... (output being captured)\n');
-        log = evalc(cmdstr);
+          fprintf('\tRunning silently... (output being captured)\n');
+          log = evalc(cmdstr);
       else
-        eval(cmdstr);
+          eval(cmdstr);
       end
 
       runjobs = runjobs + 1;
@@ -83,6 +83,10 @@ for i = 1:numel(jobs)
     catch
       
       cd(jobsdirpwd);
+      e=  lasterror;
+      for i = 1:numel(e.stack)
+          e.stack(i)
+      end
       e = lasterr;
       fprintf('Job ''%s'' failed: %s.\n', jobname, e);
       system(sprintf('echo ''%s'' >> stderr/%s', e, jobname));

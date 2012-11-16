@@ -69,7 +69,7 @@ defaults.scriptdir = pwd;
 
 defaults.myfunc_args = {};
 
-defaults.monitor_peers = true;
+defaults.monitor_peers = false;
 defaults.callback = '';
 
 defaults.jobname = [];
@@ -117,10 +117,10 @@ try
   fprintf(fid, 'warning off all;\n');
   fprintf(fid, 'try\n');
   
-  fprintf(fid, 'load(''%s'');', argsfile);
+  fprintf(fid, '\tload(''%s'');\n', argsfile);
   
   % run the user specified function
-  cmdstr = ['\trow = ', func2str(myfunc), '(passed_args{:});'];
+  cmdstr = ['\trow = ', func2str(myfunc), '(passed_args{:});\n'];
   
   % pass in either the my_func args cell or unused (only one is allowed)
   passed_args = {args.myfunc_args{:} unused{:}};
@@ -163,7 +163,7 @@ try
 
   fprintf(fid, 'catch\n');
   fprintf(fid, '\trethrow(lasterror);\n');
-  fprintf(fid, 'end\n');
+  fprintf(fid, 'end;\n');
   fprintf(fid, 'dbstack;\n');
 
 

@@ -22,6 +22,18 @@ elseif numel(data) == numel(results)
     end    
   end
   
+elseif rows(data) == numel(results)
+    for i = 1:rows(data)
+        results(i).(fieldname) = data(i,:);
+    end
+    
+elseif cols(data) == numel(results)
+    
+    for i = 1:rows(data)
+        results(i).(fieldname) = data(:,i);
+    end
+    
+  
 elseif ndims(data) > 2
   error('Can only handle 1 and 2 dimensional data types.')
 
@@ -36,6 +48,8 @@ elseif ndims(data) > 2
     end    
   end
   
+else
+    error('undefined case');
 end
   
   

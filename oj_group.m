@@ -14,20 +14,19 @@ if iscell(pmat)
   
   % take unique of each column individually
   for i = 1:cols(pmat)
-           
     col = pmat(:,i);
     
     numcol = nan(numel(col), 1);
     if isstr(col{1})      
 
       stringcols(end+1) = i;
-      ustr = unique(col);
+      [ustr, ~, numcol] = unique(col);
       
-      col = strvcat(col);
-      for j = 1:numel(ustr)
-        idx = strmatch(ustr{j}, strvcat(col));          
-        numcol(idx) = j;
-      end
+%       col = strvcat(col);
+%       for j = 1:numel(ustr)
+%         idx = strmatch(ustr{j}, strvcat(col));          
+%         numcol(idx) = j;
+%       end
       
       strings{i} = {ustr};
       
@@ -47,12 +46,16 @@ else
 end
 
 % find unique parameters now
+
 groups = unique(numpmat, 'rows');
 grpidx = nan(numel(sa), 1);
 for i = 1:rows(groups)
-    
-  grpmat = repmat(groups(i,:), rows(numpmat), 1);
-  idx = find(all(grpmat == numpmat, 2));
+  
+    idx = find(all(bsxfun(@eq, groups(i,:), numpmat), 2));
+
+    groupsize(i)=  numel(idx);
+  %grpmat = repmat(groups(i,:), rows(numpmat), 1);
+  %idx = find(all(grpmat == numpmat, 2));
 
   grpidx(idx) = i;  
 end
@@ -66,6 +69,7 @@ groupsa = struct();
 % TODO: this should return structarray!!
 for j = 1:rows(groups)
   groupsa(j).grp = j;
+  groupsa(j).n = groupsize(j);
   for i = 1:cols(groups)
     if any(i==stringcols) % is a string
       s = strings{i}{1};
