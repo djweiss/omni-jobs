@@ -1,6 +1,26 @@
-function [str, colwidth] = oj_cell2str(x, varargin)
-% Converts a cell array table to a string.
+function [str, colwidth] = cell2str(x, varargin)
+% Converts a cell array table to a big string.
+%
+% USAGE: 
+%
+%   [str, colwidth] = oj.cell2str(X, ...)
+%
+%   - X: 2-D cell array input; can be arbitrary.
+%   - str: nicely formatted display of the elements in X.
+%   - colwidth: the width of each column in the string table. 
+%
+% Options:
+%
+%   - 'precision': fprintf format string to use for numerical
+%   outputs, default: '%-7.5g' (can be cell, one for each column)
+%   - 'maxwidth': maximum width in characters of any column.
+%   - 'minwidth': cell array, minimum width for every field in x.
+%   - 'highlightf': a postprocessing function handle for RTF
+%   output, will highlight fields in column i if hightlightf{i}
+%   returns true for that input.
 
+
+ 
 n = rows(x);
 m = cols(x);
 
