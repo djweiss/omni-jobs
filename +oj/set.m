@@ -1,12 +1,18 @@
 function [ results ] = set(results, fieldname, data, varargin)
 % Add a new column to a struct array.
 %
+% Usage:
+%
+%   results = oj.set(results, fieldname, data, ...)
+%
+% Options:
+%
 % SEE ALSO
-%   OJ.GET, OJ.DISP
+%   oj.get, oj.disp
 
 [rep varargin] = getpropval(varargin, 'rep', false);
 
-fieldname = oj_encode(fieldname);
+fieldname = oj.encode(fieldname);
 
 if rep
     for i = 1:numel(results)   

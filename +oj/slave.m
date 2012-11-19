@@ -1,4 +1,25 @@
-function [log] = oj_slave(jobsdir, varargin)
+function [log] = slave(jobsdir, varargin)
+% Start locally processing a jobsdir one job at a time.
+%
+% Usage:
+%
+%   log = oj.slave(jobsdir, ...)
+%
+% An alternative to using SGE, OJ.SLAVE will start processing the
+% jobs in JOBSDIR one at a time.
+%
+% Options:
+%
+%   - 'stopat': Stop when this many jobs have been
+%   processed. Default: inf.
+%
+%   - 'filter': Ignore jobs that don't match this filter. 
+%   Default: '*'
+%  
+%   - 'logout': Run silently and write the log to disk. Default: false.
+% 
+%   - 'force' : Ignore if jobs have already been
+%   processed. Default: false.
 
 defaults.filter = '*';
 defaults.logout = false;

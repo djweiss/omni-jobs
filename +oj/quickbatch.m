@@ -1,6 +1,29 @@
-function [] = oj_quickbatch(funcname, varargin)
-% Easily makes a batch of jobs with unique parameters.
-
+function [] = quickbatch(funcname, varargin)
+% Quickly makes a batch of jobs with unique parameters.
+%
+% Usage:
+%
+%    oj.quickbatch(funcname, arg1vals, arg2vals, ...)
+%
+% The most important function in the toolbox, OJ.QUICKBATCH will
+% easily write out a batch job to cover all combinations of a given
+% set of arguments. See the demo for examples on how to use this
+% function.
+%
+% Options:
+%
+%   - 'batchname': The name of the directory the batch will be
+%   stored in. Default: [funcname '_batch']. 
+% 
+%   - 'overwrite': Automatically overwrite an existing batch with
+%   the same directory name. Default: false
+%
+%   - 'append': Add more jobs to an existing directory rather than
+%   starting from scratch. Default: false
+%    
+% SEE ALSO
+%   oj.write, oj.submit
+    
 [exhaustive varargin] = getpropval(varargin, 'exhaustive', true);
 [autosubmit varargin] = getpropval(varargin, 'autosubmit', false);
 [write_args varargin] = getpropval(varargin, 'write_args', {});
@@ -39,7 +62,7 @@ else
 end
 
 if autosubmit
-  oj_submit(batchname, submit_args{:});
+  oj.submit(batchname, submit_args{:});
 end
 
 %%%%%%%%%%%%%%%%%%%%%
@@ -51,7 +74,7 @@ function [] = recursive_write(funcname, batchname, argStack, varRange, varargin)
     argStack{end+1} = varRange;
     
     if numel(varargin)==0
-      oj_write( batchname, funcname, 'myfunc_args', {argStack{:} fixed_args{:}}, ...
+      oj.write( batchname, funcname, 'myfunc_args', {argStack{:} fixed_args{:}}, ...
                 write_args{:}, 'jobname', sprintf('%s%.4d', batchname, jobnum));
       jobnum = jobnum+1;
     else        
@@ -70,10 +93,10 @@ function [] = recursive_write(funcname, batchname, argStack, varRange, varargin)
       argStack{n+1} = v;
       
       if numel(varargin)==0
-          %        oj_write( batchname, funcname, 'myfunc_args', ...
+          %        oj.write( batchname, funcname, 'myfunc_args', ...
           %        argStack, write_args{:});
       
-        oj_write( batchname, funcname, 'myfunc_args', {argStack{:} fixed_args{:}}, ...
+        oj.write( batchname, funcname, 'myfunc_args', {argStack{:} fixed_args{:}}, ...
                   write_args{:}, 'jobname', sprintf('%s%.4d', batchname, jobnum));
         jobnum = jobnum+1;
 

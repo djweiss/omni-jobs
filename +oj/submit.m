@@ -1,38 +1,49 @@
-function oj_submit(jobsdir, varargin)
-% Submits any unsubmitted jobs from an OPUSJOBS directory.
+function submit(jobsdir, varargin)
+% Submits any unsubmitted jobs from a batch job directory.
 %
-% OJ_SUBMIT(JOBSDIR, ...)
+% Usage:
+% 
+%   oj.submit(jobsdir, ...)
 %
 % For the jobs directory JOBSDIR, looks at all job files and
 % submits any that haven't yet been submitted. Please note the
 % optional argument MATLAB_STARTDIR; it's important that this is
 % set properly for your environment.
 % 
-% OPTIONAL ARGUMENTS:
+% Options:
 %
-% MATLAB_EXEC - A string containing the shell command used by
-%   the submission script to start Matlab. (Default: 'matlab_local')
+%   - 'matlab_exec' : A string containing the shell command used by
+%   the submission script to start Matlab. (Default: 'matlab
+%   -nodisplay -nojvm -singleCompThread')
 %
-% MATLAB_STARTDIR - The directory in which the matlab invoking
-%   command should be called. This is the directory that contains
-%   your startup.m file. If set to 'auto', OJ_SUBMIT will try to
-%   figure out this path automatically. (Default: 'auto')
+%   - 'matlab_startdir' : The directory in which the matlab invoking
+%   command should be called. This is the directory that contains your
+%   startup.m file. If set to 'auto', OJ.SUBMIT will try to figure out
+%   this path automatically. (Default: 'auto')
 %
-% SLEEP - The number of seconds to sleep in between job
+%   - 'sleep' : The number of seconds to sleep in between job
 %   submissions, to avoid a blocked queue of long jobs so that even
 %   long jobs will finish at regular intervals. (Default: 0 seconds.)
 %
-% MAXSLEEP - The maximum number of jobs to space, so that jobs can
-%   be submitted rapidly after all available slots are taken
+%   - 'maxsleep' : The maximum number of jobs to space, so that jobs
+%   can be submitted rapidly after all available slots are taken
 %   (Default: 0).
 % 
-% FILTER - A shell search string (e.g., 'subj1*'), so that only
+%   - 'filter' : A shell search string (e.g., '1*'), so that only
 %   jobs matching this string will be submitted. (Default: '*')
 %
-% DRYRUN - If true, OJ_SUBMIT will output which jobs would be submitted
-%   submitted rather than actually submitting them. (Default: false)
+%   - 'dryrun' : If true, OJ.SUBMIT will output which jobs would be
+%   submitted submitted rather than actually submitting
+%   them. (Default: false)
 %
-% See also OJ_WRITE, OJ_RESUBMIT, OJ_LOAD, OJ_QUICKBATCH.
+%   - 'q': Specify a list of queue's to submit to. Default: '' (all
+%   queues).
+%
+%   - 'qsubargs': A list of options to pass to QSUB. Default: ''
+%   (none).
+%
+% SEE ALSO
+%   oj.write, oj.quickbatch, oj.load
 
 defaults.matlab_exec = 'matlab -nodisplay -nojvm -singleCompThread';
 defaults.matlab_startdir = 'auto';
@@ -41,44 +52,13 @@ defaults.maxsleep = 0; % stop sleeping after submitting this # of jobs
 defaults.filter = '*';
 defaults.dryrun = false;
 defaults.avoid = []; % node's to avoid
-defaults.q = 'a';
-
-opt_nodes = {'ahbar','hamus','kipod','nemia', 'snaim', 'samur'}; %,'samur'};  % snaim
-def_nodes = {'alef','bet', 'gimel','dalet'}; %,'hei','vav'};
-
-%defaults.qsubargs = ['-q "opterons,default"']; %['-q long-jobs']; %@alef.seas.upenn.edu;' ...
-    %'long-jobs@bet.seas.upenn.edu;' ...
-    %'long-jobs@gimel.seas.upenn.edu;' ...
-    %'long-jobs@dalet.seas.upenn.edu"' ];
+defaults.q = ''; 
 defaults.qsubargs = '';
 args = propval(varargin, defaults);
 
-q = args.q;
-queues = '';
-for i = 1:numel(opt_nodes)
-    if q ~= 'd'
-        queues = [queues 'long-jobs@' opt_nodes{i} ','];
-    end
-    if q == 'a' || q == 'd'
-        queues = [queues 'default@' opt_nodes{i} ','];
-    end
-    if q == 'a' || q == 'o' || q == 'd' || q == 'x'
-        queues = [queues 'opterons@' opt_nodes{i} ','];
-    end
+if ~isempty(args.q)
+    args.qsubargs = sprintf('%s -q %s', args.qsubargs, args.q);
 end
-for i = 1:numel(def_nodes)
-    if q ~= 'o' || q == 'x' || q == 'd' || q == 'a'
-        if q == 'l' || q == 'a' || q == 'x'
-            queues = [queues 'long-jobs@' def_nodes{i} ','];
-        end
-        if q == 'a' || q == 'd'
-            queues = [queues 'default@' def_nodes{i} ','];
-        end
-    end
-end
-queues = [ '"' queues(1:end-1) '"'];
-
-args.qsubargs = sprintf('%s -q %s', args.qsubargs, queues);
 
 [args] = validate(args);
 
@@ -133,8 +113,8 @@ if strcmp(args.matlab_startdir, 'auto')
   end
   
 end
-args.matlab_startdir = oj_path(args.matlab_startdir);
-jobsdir = oj_path(jobsdir);
+args.matlab_startdir = oj.path(args.matlab_startdir);
+jobsdir = oj.path(jobsdir);
 
 end
 
@@ -153,24 +133,6 @@ try
     
   fprintf(fid, '#!/bin/bash\n');
   fprintf(fid, 'unset DISPLAY\n');
-
-  if ~isempty(args.avoid)
-       
-    fprintf(fid, 'node=`echo $HOSTNAME | sed ''s/.*node\\([0-9]*\\)\\.cluster.private/\\1/g''`\n');
-    fprintf(fid, '\tts=`date`\n');
-    fprintf(fid, 'echo "$ts: $node attempting" >> %s/avoidlog\n', jobsdir);
-    for a = 1:numel(args.avoid)
-      
-      fprintf(fid, 'if [[ "$node" == "%.2d" ]]; then\n', args.avoid(a));
-      fprintf(fid, '\techo "$ts: $node detected. Resubmitting job $JOB_ID" >> %s/avoidlog\n', jobsdir);
-      fprintf(fid, '\tqresub $JOB_ID\n');
-      fprintf(fid, '\tsleep 100\n');
-      fprintf(fid, '\texit 1\n');
-      fprintf(fid, 'fi\n');
-      
-    end    
-  end
-    
   fprintf(fid, 'cd %s\n', args.matlab_startdir);
   fprintf(fid, 'echo $JOB_ID >> %s/started/%s\n', jobsdir, jobname);
   fprintf(fid, 'echo $HOSTNAME >> %s/started/%s\n', jobsdir, jobname);

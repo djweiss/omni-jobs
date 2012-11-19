@@ -1,8 +1,8 @@
 function [ data ] = clean(jobsdir, varargin)
-% Cleans the recordkeeping files of a previous submission.
+% Delete all files associated with a given batch job.
 %
 % SEE ALSO
-%   OJ.RESET, OJ.REPORT, OJ.STATS
+%   oj.reset
 
 system(sprintf('rm -rf %s/submitted/*', jobsdir));
 system(sprintf('rm -rf %s/completed/*', jobsdir));

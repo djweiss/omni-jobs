@@ -1,8 +1,8 @@
 function [ f ] = decode( str )
-% Decodes a string encoded with OJ.ENCODE. 
+% Convert a string encoded with oj.encode into human-readable format.
 % 
 % SEE ALSO
-%   OJ.FIELDS, OJ.ENCODE, OJ.ENCODING
+%   oj.encode, oj.encoding
 
 f = str;
 

@@ -1,25 +1,31 @@
-function [jobs] = oj_stats(jobsdir, varargin)
-% Generates a status report on an opusjobs directory.
+function [jobs] = stats(jobsdir, varargin)
+% Generates a status report on a batch job directory.
 %
-% JOBS = OJ_STATS(JOBSDIR, ...)
+% Usage:
 %
-% OJ_STATS determines the status of currently running jobs,
-% belonging to a particular jobsdir. It does this as follows.
+%   jobs = oj.stats(jobsdir, ...)
 %
-% When a job is submitted, it gets a <jobname>.submit file. That
-% means that it has been submitted to Opus already and should be
-% waiting in the queue. We can check this against the actual queue,
-% but this isn't implemented yet.
+% OJ.STATS determines the status of currently running jobs, belonging
+% to a particular jobsdir. It does this by checking for submit files,
+% started files, lock files, stdout and stderr files, etc. etc. and
+% attempting to determining the state of each job.
 %
-% Next, OJ_STATS looks for jobs that were submitted and that have
-% been started. When an opusjob starts, the first thing it does is
-% write out a .start file; however, the cluster will also generate
-% a <jobname>.o<jobid> file when it actually gets started on the
-% cluster. If a job has no .start but it does have an .sh.o<id>,
-% then something terrible has happened.
+% The output of OJ.STATS is useful; it can be passed to either
+% OJ.REPORT for display or to OJ.RESET to reset the status of
+% individually failed jobs.
 %
+% Options:
+%
+%   - 'load_output' : Whether or not to load the STDOUT of each job
+%   into memory for inspection. Default: true
+%
+%   - 'load_errors': Whether or not to load the STDERR of each job
+%   into memory for inspection. Default: true
+%
+% SEE ALSO
+%   oj.reset, oj.report, oj.submit, oj.quickbatch
 
-jobsdir = oj_path(jobsdir);
+jobsdir = oj.path(jobsdir);
 
 defaults.load_output = true;
 defaults.load_errors = true;
@@ -147,7 +153,7 @@ savepwd = pwd;
 
       % No waiting jobs anymore -- these must be broken!
       if isempty(result)
-        jobs(idx) = oj_set(jobs(idx), 'mia', repmat(true, count(idx), 1));
+        jobs(idx) = oj.set(jobs(idx), 'mia', repmat(true, count(idx), 1));
       end
       
     end    

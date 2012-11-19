@@ -1,15 +1,27 @@
 function [grpidx, groups, groupnames] = group(sa, varargin)
-% Groups a structarray according to unique combinations of values.
+% Find rows containing unique combinations of field values.
 %
 % Usage:
 % 
+%   [grpidx groups groupnames] = group(result, field1, field2, ...)
+%
+% Finds unique combinations of the values in FIELD1, FIELD2, etc., and
+% groups the data accordingly. If N groups are returned, then GRPIDX
+% is in the range 1...N indicating which group each row of RESULTS
+% belongs to. The structarray GROUPS contains the unique settings of
+% each field, as well as a count of the # of elements in each
+% group. The cell array GROUPNAMES is a convenient list of
+% human-readable names for each group.
+%
+% SEE ALSO
+%   oj.get, oj.disp
 
 groups = [];
 stringcols = [];
 strings = {}; % stores string values for unique string columns
 
 % note: varargin must be valid fieldnames
-pmat = oj_get(sa, 'mixed', varargin{:});
+pmat = oj.get(sa, 'mixed', varargin{:});
 
 if iscell(pmat)
   
@@ -76,9 +88,9 @@ for j = 1:rows(groups)
   for i = 1:cols(groups)
     if any(i==stringcols) % is a string
       s = strings{i}{1};
-      groupsa(j).(oj_encode(varargin{i})) = s{groups(j,i)};
+      groupsa(j).(oj.encode(varargin{i})) = s{groups(j,i)};
     else
-      groupsa(j).(oj_encode(varargin{i})) = groups(j,i);
+      groupsa(j).(oj.encode(varargin{i})) = groups(j,i);
     end  
   end
 

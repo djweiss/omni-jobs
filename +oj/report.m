@@ -1,8 +1,23 @@
-function [stats] = oj_report(stats, varargin)
-% Print a status report on an opusjobs directory.
+function [stats] = report(stats, varargin)
+% Print a status report on a batch job directory.
 %
-% STATS = OJ_REPORT(JOBSDIR, ...)
+% Usage:
+%  
+%   stats = oj_report(jobsdir, ...)
+%   oj_report(stats, ...)
 %
+% Given the name of a directory, calls OJ.STATS to compute
+% statistics of running jobs and displays the output in an
+% easy-to-parse format. 
+%
+% ** IMPORTANT ** This function is pretty old and out-of-date. It
+% tends to think jobs have crashed even when they are still running
+% if anything is output to stderr. 
+%
+% Options: See options of OJ.STATS.
+%
+% SEE ALSO
+%   oj.stats, oj.quickbatch
 
 defaults.usetotal = false;
 defaults.detailed = false;
@@ -14,7 +29,7 @@ defaults.showresubmit = false;
 
 if ~isstruct(stats)    
   if isstr(stats)
-    stats = oj_stats(stats, unused{:});    
+    stats = oj.stats(stats, unused{:});    
   else
     error(['Input must be a string (JOBSDIR) or a structarray ' ...
            '(STATS).']);

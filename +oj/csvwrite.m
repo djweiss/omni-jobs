@@ -1,13 +1,25 @@
-function [sumdata] = oj_csvwrite(results, file, varargin)
-% Writes a structarray to a CSV file.
+function [sumdata] = csvwrite(results, file, varargin)
+% Write a structarray to a CSV file.
+%
+% Usage:
+%
+%    oj.csvwrite(results, filename, ...)
+%
+% Options:
+%   
+%    - 'f_precision': Floating point precision. Default: '%.8g'
+%
+%    - 's_precision': String precision. Default: '%s'
+%
+%    - 'delimiter'  : Delimiter. Default: ','
+% 
+% SEE ALSO
+%   oj.csvread
 
 % check fields for special properties
-[f_precision varargin] = getpropval(varargin, 'fprecision', '%.8g');
+[f_precision varargin] = getpropval(varargin, 'f_precision', '%.8g');
 [s_precision varargin] = getpropval(varargin, 's_precision', '%s');
 [delimiter varargin] = getpropval(varargin, 'delimiter', ',');
-[csv_title varargin] = getpropval(varargin, 'csv_title', ...
-                                   sprintf('Exported from Matlab using %s(%s) - %s', ...
-                                           mfilename, inputname(1), datestr(now)));
 
 % If no fields specified, use all of them.
 if isempty(varargin)
@@ -47,11 +59,6 @@ for i = 1:numel(fields)
   sumdata = horzcat(sumdata, vertcat(titles, writedata)); 
 end
 
-if ~isempty(csv_title)
-  toptitle = cell(1, cols(sumdata));
-  toptitle{1} = csv_title;  
-  sumdata = vertcat(toptitle, sumdata);
-end
 
 f = fopen(file, 'w+');
 % write out the cell array

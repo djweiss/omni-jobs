@@ -5,10 +5,10 @@ function [] = disp(results, varargin)
 %
 %   oj.disp(results, ...)
 % 
-% Options: See OJ.CELL2STR for description of options.
+% Options: See oj.cell2str for description of options.
 % 
 % SEE ALSO
-%   OJ.LOAD, OJ.CELL2STR
+%   oj.load, oj.cell2str
  
 % check fields for special properties
 [maxwidth varargin] = getpropval(varargin, 'maxwidth', 20);

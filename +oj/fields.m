@@ -1,8 +1,8 @@
 function [fields] = fields(r)
-% Returns a list of (possibly encoded) fieldnames.
+% Fetches a list of human-readable fieldnames.
 %
 % SEE ALSO
-%   OJ.ENCODE, OJ.DECODE
+%   oj.encode, oj.decode
 
 fields = fieldnames(r);
 for i = 1:numel(fields)

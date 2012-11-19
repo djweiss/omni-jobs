@@ -1,11 +1,21 @@
-function [ sa, idx ] = oj_sort(sa, varargin)
-% Sorts a structarray by arbitrary fieldnames
+function [ sa, idx ] = sort(sa, varargin)
+% Sort a structarray by arbitrary fieldnames.
+%
+% Usage:
+% 
+%   [results idx] = oj.sort(results, field1, field2, ...)
+%   [results idx] = oj.sort(results, field1, 'ascend', ...)
+% 
+% Allows sorting by mixed data types. After each field, optionally
+% specify sort direction.
+%
+% SEE ALSO
+%   oj.group, oj.disp
 
 % parse field names
 if nargin==1
   error('You must supply at least one field to sort by!');
 end
-
 
 fields = {};
 sortmodes = {};

@@ -1,4 +1,5 @@
-function [str] = oj_readtext(filename, varargin)
+function [str] = readtext(filename, varargin)
+% Grab the contents of a text file.
 
 [convert varargin] = getpropval(varargin, 'convert', false);
 

@@ -2,7 +2,7 @@ function [ encoding ] = encoding()
 % List of invalid -> valid character maps.
 %
 % SEE ALSO
-
+%   oj.encode, oj.decode
 
 encoding = {'.', '_a_', ...
             ',', '_b_', ...

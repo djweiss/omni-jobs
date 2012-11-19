@@ -1,4 +1,17 @@
-function [] = oj_reset(jobs, varargin)
+function [] = reset(jobs, varargin)
+% Delete the files associated with a specific set of jobs.
+%
+% Usage:
+%
+%   oj.reset(jobs)
+%
+% Given the output of OJ.STATS, pass one or more jobinfo structs to
+% OJ.RESET and OJ.RESET will delete the submission files of only
+% those jobs. Useful when you need to restart crashed jobs without
+% cleaning the entire directory.
+%
+% SEE ALSO
+%   oj.clean
 
 
 if nargin == 1

@@ -1,39 +1,35 @@
-function [results] = oj_load(jobsdir, varargin)
-% Loads the results of an OPUSJOB batch.
+function [results] = load(jobsdir, varargin)
+% Loads the results of a batch job.
 %
-% [RESULTS] = OJ_LOAD(JOBSDIR, ...)
+% Usage:
+%  
+%   results = oj.load(jobsdir, ...)
 %
-% For a given OPUSJOBS directory, loads all results files from any
-% completed jobs. Each result file will contain a struct or array
-% of struct (which we call 'rows'). OJ_LOAD will concatenate each
-% of these in a relatively efficient way, and then optionally convert
-% the result into different formats.
+% For a given batch job directory, loads all results files from any
+% completed jobs. Each result file will contain a struct or array of
+% structs (which we call 'rows'). OJ.LOAD loads the input and output
+% of all jobs and returns a structarray RESULTS.
 %
-% By default, the format of RESULTS is a structarray, so that the
-% other OPUSJOBS commands (e.g., OJ_GET, OJ_SORT, etc.) will
-% function properly. Alternatively, if Matlab version is >= 7.4,
-% you can return a 'dataset' object, or you can return a single
-% struct with matrices/vectors as fields ('struct').
+% Options:
 %
-% OPTIONAL ARGUMENTS:
+%   - 'filter' : Only load filenames that match the
+%   filter. Default: '*.mat'
 %
-% FORMAT - A string, either 'dataset', 'structarray', or 'struct',
-%   to specify the format of the data that is returned.
-%   (Default: 'structarray')
+%   - 'loadargs': Whether or not to load input arguments as well as
+%   the output. Default: true
 %
-% FILTER - A shell format specifier string that will filter the mat
-%   files loaded. Note: you must include the filename extension in
-%   the filter. (Default: '*.mat')
-% 
-% See also OJ_WRITE, OJ_SUBMIT, OJ_QUICKBATCH.
+%   - 'rmfields': A list of fields to remove from the output.
+%
+%   - 'proc': An optional post-processing function handle.
+%
+% SEE ALSO
+%   oj.write, oj.quickbatch
 
 defaults.format = 'structarray';
 defaults.loadargs = true;
-defaults.subfield = true;
 defaults.filter = '*.mat';
 defaults.rmfields = '';
 defaults.proc = '';
-defaults.singular = true;
 
 args = propval(varargin, defaults);
 args = validate(args);
@@ -56,26 +52,8 @@ try
 
   files = dir(args.filter);
 
-  if ~args.singular
-    fprintf('Inspecting results .mat files... (%d found)\n', ...
-            numel(files));
-    
-    rows = cell(numel(files), 1);
-    for i = 1:numel(files)
-      
-      % load the "row" from the saved file, which may be one or more rows
-      vars = whos('-file', files(i).name);
-      
-      rowidx = strmatch('row', {vars.name});
-      
-      count = count + vars(rowidx).size(2)*vars(rowidx).size(1);          
-      progress(i, numel(files));
-    end
-  
-  else
-    count = numel(files);
-    rows = cell(numel(files),1);
-  end
+  count = numel(files);
+  rows = cell(numel(files),1);
     
   fprintf('Loading and concatenating %d rows...\n', count);
   % now count up the number of rows we actually need, and
@@ -88,15 +66,11 @@ try
     timeleft(numel(files));
 
     try
-        if args.singular
-            tmp = load(files(i).name, 'row');    
-            row.result = tmp.row;
-        else
-            load(files(i).name, 'row');    
-        end
+        tmp = load(files(i).name, 'row');    
+        row.result = tmp.row;
         
         if ~isempty(args.proc)
-            row = args.proc(row);
+            row.result = args.proc(row.result);
         end 
         if args.loadargs
             [path, jobname, ext] = fileparts(files(i).name);
@@ -116,7 +90,7 @@ try
       
     % Clear unwanted fields
     if ~isempty(args.rmfields)
-      row = oj_rm(row, args.rmfields);
+      row.result = oj.rm(row.result, args.rmfields);
     end
     
     if ~isempty(row)

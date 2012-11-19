@@ -1,6 +1,10 @@
-11/19/2012
+Last updated: 11/19/2012
 
-- Test 'highlightf' functionality of cell2str
-- Finish documentation
-- Add licenses to all source code
+* Finish documentation
 
+* Add licenses to all source code
+
+* Add demo
+
+* Write basic functionality tests
+ 

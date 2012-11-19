@@ -1,8 +1,16 @@
 function [groups] = groupmeans(data, fx, fys, varargin)
-% Computes the mean of several fields when grouped by other fields.
+% Handy shortcut for computing group means.
 % 
+% Usage:
+%
+%   groups = oj.groupmeans(data, fx, fys)
+%
+% Given input DATA, calls OJ.GROUP using cell array of fields FX and
+% then computes group means and standard errors for each field in
+% cell array FYS.
+%
 % SEE ALSO
-%   OJ.GROUP 
+%   oj.group
 
 [grp groups] = oj.group(data, fx{:});
 

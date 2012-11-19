@@ -1,4 +1,22 @@
-function [ r ] = oj_csvread(file, varargin)
+function [ r ] = csvread(file, varargin)
+% Read structarray from a comma-separated value file.
+%
+% Usage:
+%
+%    r = csvread(file, ...)
+%
+% Options:
+%
+%   - 'delimiter'  : Default: ','
+%
+%   - 'zero_blanks': How to interpret blank values; if true, puts
+%   zeros instead of empty. Default: true
+%
+%   - 'src'        : Append the filename as an extra field to the
+%   loaded data. Default: true
+% 
+% SEE ALSO
+%   oj.csvwrite
 
 [delimiter varargin] = getpropval(varargin, 'delimiter', ',');
 [zero_blanks varargin] = getpropval(varargin, 'zero_blanks', true);
@@ -10,17 +28,16 @@ if fid < 0
 end
 
 % Get field names from header of file
-    fields = {};
-    headtxt = fgetl(fid);
-    
-    [token, rem] = strtok(headtxt, delimiter);
-    
-    while ~isempty(token)
-        fields{end+1} = oj_encode(strtrim(strclean(token)));
-        
-        [token, rem] = strtok(rem, delimiter);
-    end
+fields = {};
+headtxt = fgetl(fid);
 
+[token, rem] = strtok(headtxt, delimiter);
+
+while ~isempty(token)
+    fields{end+1} = oj.encode(strtrim(strclean(token)));
+    
+    [token, rem] = strtok(rem, delimiter);
+end
 
 nfields = numel(fields);
 

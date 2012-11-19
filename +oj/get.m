@@ -1,8 +1,11 @@
 function [ data ] = get(results, varargin)
 % Returns a matrix or cell array built from fields of a structarray.
 %
-% [data] = oj.get(results, field1, field2, ...)
-% 
+% Usage:
+%
+%    [data] = oj.get(results, field1, field2, ...)
+%    [data] = oj.get(results, 'mixed', field1, field2, ...)
+%
 % For a given structarray RESULTS (either loaded using OJ.LOAD or from
 % another source), OJ.GET will concatenate fields of the RESULTS data
 % table and return them; the format of DATA depends on the datatype
@@ -17,8 +20,6 @@ function [ data ] = get(results, varargin)
 % Alternatively, mixed data types can always be specified by adding
 % the keyword 'mixed' instead of the first field name:
 %
-% [data] = oj.get(results, 'mixed', field1, field2, ...)
-%
 % NOTE: OJ.GET tries to be smart about preserving "rows" of the
 % structarray. If each "row" contains a row vector, these will be
 % concatenated vertically; if each "row" contains a column
@@ -30,7 +31,7 @@ function [ data ] = get(results, varargin)
 % each field contains collectively.
 %
 % SEE ALSO
-%   OJ.SET, OJ.LOAD
+%   oj.load, oj.set
 
 datatype = [];
 data = [];
