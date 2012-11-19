@@ -1,14 +1,14 @@
-function [ data ] = oj_get(results, varargin)
+function [ data ] = get(results, varargin)
 % Returns a matrix or cell array built from fields of a structarray.
 %
-% [DATA] = OJ_GET(RESULTS, FIELD1, FIELD2, ...)
+% [data] = oj.get(results, field1, field2, ...)
 % 
-% For a given structarray RESULTS (either loaded using OJ_LOAD or from
-% another source), OJ_GET will concatenate fields of the RESULTS data
+% For a given structarray RESULTS (either loaded using OJ.LOAD or from
+% another source), OJ.GET will concatenate fields of the RESULTS data
 % table and return them; the format of DATA depends on the datatype
 % of FIELD1. 
 %
-% If FIELD1 is numeric, the DATA will be a matrix and OJ_GET will
+% If FIELD1 is numeric, the DATA will be a matrix and OJ.GET will
 % halt if any other fields are not numeric. Similarly, if FIELD1 is
 % a structure, all other fields must be structures as well; if
 % FIELD1 is a string or a cell array, then the data will be
@@ -17,17 +17,20 @@ function [ data ] = oj_get(results, varargin)
 % Alternatively, mixed data types can always be specified by adding
 % the keyword 'mixed' instead of the first field name:
 %
-% [DATA] = OJ_GET(RESULTS, 'mixed', FIELD1, FIELD2, ...)
+% [data] = oj.get(results, 'mixed', field1, field2, ...)
 %
-% NOTE: OJ_GET tries to be smart about preserving "rows" of the
+% NOTE: OJ.GET tries to be smart about preserving "rows" of the
 % structarray. If each "row" contains a row vector, these will be
 % concatenated vertically; if each "row" contains a column
 % vector, these will be concated horizontally and then transposed to
 % form rows.
 %
 % Although it is convenient to think of fields as "columns" of a
-% data table, the output of OJ_GET will contain as many columns as
+% data table, the output of OJ.GET will contain as many columns as
 % each field contains collectively.
+%
+% SEE ALSO
+%   OJ.SET, OJ.LOAD
 
 datatype = [];
 data = [];
@@ -47,7 +50,7 @@ for i = 1:numel(varargin)
   end
 
   if ~isfield(results(1), field)
-      field = oj_encode(field);
+      field = oj.encode(field);
   end
   
   val = results(1).(field);

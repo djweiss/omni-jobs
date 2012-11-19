@@ -1,7 +1,7 @@
 function [str, colwidth] = cell2str(x, varargin)
 % Converts a cell array table to a big string.
 %
-% USAGE: 
+% Usage: 
 %
 %   [str, colwidth] = oj.cell2str(X, ...)
 %
@@ -15,11 +15,12 @@ function [str, colwidth] = cell2str(x, varargin)
 %   outputs, default: '%-7.5g' (can be cell, one for each column)
 %   - 'maxwidth': maximum width in characters of any column.
 %   - 'minwidth': cell array, minimum width for every field in x.
-%   - 'highlightf': a postprocessing function handle for RTF
-%   output, will highlight fields in column i if hightlightf{i}
-%   returns true for that input.
-
-
+%   - 'highlightf': a postprocessing function handle for output, will
+%   "highlight" fields in column i if hightlightf{i} returns true for
+%   that input.
+%
+% SEE ALSO
+%   OJ.DISP
  
 n = rows(x);
 m = cols(x);
@@ -83,7 +84,7 @@ for i = 1:m
       col = horzcat(col, repmat(' ', rows(col), 13));
 
       for j = 1:rows(col)
-        repstr = sprintf('{\\\\chcbpat%d %s} ', h(j), col(j,1:oldcol));
+        repstr = sprintf('*%s*', h(j), col(j,1:oldcol));
         col(j,:) = repstr(1:cols(col));
       end      
     end    

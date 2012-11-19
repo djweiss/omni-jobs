@@ -1,5 +1,8 @@
-function [grpidx, groupnames, groups] = oj_group(sa, varargin)
-% Groups a structarray according to unique values of several fields
+function [grpidx, groups, groupnames] = group(sa, varargin)
+% Groups a structarray according to unique combinations of values.
+%
+% Usage:
+% 
 
 groups = [];
 stringcols = [];

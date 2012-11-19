@@ -1,9 +1,14 @@
-function [] = oj_disp(results, varargin)
-% Nicely display an opusjobs results structarray as a data table.
+function [] = disp(results, varargin)
+% Nicely display a structarray as a data table.
 %
-% OJ_DISP(RESULTS)
+% Usage:
+%
+%   oj.disp(results, ...)
 % 
+% Options: See OJ.CELL2STR for description of options.
 % 
+% SEE ALSO
+%   OJ.LOAD, OJ.CELL2STR
  
 % check fields for special properties
 [maxwidth varargin] = getpropval(varargin, 'maxwidth', 20);
@@ -14,16 +19,16 @@ if isempty(varargin)
   fields = fieldnames(results)'; % Decode field names
   for j = 1:numel(fields)
       if ~isfield(results, fields{j})
-          fields{j} = oj_encode(fields{j});
+          fields{j} = oj.encode(fields{j});
       else
-          fields{j} = oj_decode(fields{j});
+          fields{j} = oj.decode(fields{j});
       end
   end
 else
   fields = varargin;
 end
 
-displaydat = oj_get(results, 'mixed', fields{:});
+displaydat = oj.get(results, 'mixed', fields{:});
 if numel(fields) == 0
   error('Programmer''s error. Should not be possible to specify no fields.');
 end
@@ -38,7 +43,7 @@ for i = 1:numel(fields)
   minwidths(i) = numel(fields{i});
 end
 
-[str, colwidth] = oj_cell2str(displaydat, 'minwidth', minwidths, ...
+[str, colwidth] = oj.cell2str(displaydat, 'minwidth', minwidths, ...
                            'maxwidth', maxwidth, 'precision', precision);
 
 title = ' ';

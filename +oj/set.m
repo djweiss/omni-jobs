@@ -1,5 +1,8 @@
-function [ results ] = oj_set(results, fieldname, data, varargin)
-% Add a new column to an OPUSJOBS results set.
+function [ results ] = set(results, fieldname, data, varargin)
+% Add a new column to a struct array.
+%
+% SEE ALSO
+%   OJ.GET, OJ.DISP
 
 [rep varargin] = getpropval(varargin, 'rep', false);
 

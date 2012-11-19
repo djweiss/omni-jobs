@@ -1,4 +1,8 @@
-function [ encoding ] = oj_encoding()
+function [ encoding ] = encoding()
+% List of invalid -> valid character maps.
+%
+% SEE ALSO
+
 
 encoding = {'.', '_a_', ...
             ',', '_b_', ...

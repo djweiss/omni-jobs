@@ -1,4 +1,8 @@
-function [ f ] = oj_encode( str )
+function [ f ] = encode( str )
+% Encodes a string with arbitrary characters into a fieldname.
+% 
+% SEE ALSO
+%   OJ.FIELDS, OJ.DECODE, OJ.ENCODING
 
 f = str;
 try
@@ -7,7 +11,7 @@ try
 catch
 end
 
-encoding = oj_encoding();
+encoding = oj.encoding();
 
 for i = 1:2:numel(encoding)
   f = strrep(f, encoding{i}, encoding{i+1});

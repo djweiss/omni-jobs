@@ -1,4 +1,8 @@
-function [fields] = oj_fields(r)
+function [fields] = fields(r)
+% Returns a list of (possibly encoded) fieldnames.
+%
+% SEE ALSO
+%   OJ.ENCODE, OJ.DECODE
 
 fields = fieldnames(r);
 for i = 1:numel(fields)
