@@ -1,5 +1,6 @@
 classdef CFileFinder
-   properties (Hidden = true)
+
+    properties (Hidden = true)
       dir 
       onlydir
       root 
