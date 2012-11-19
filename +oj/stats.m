@@ -25,6 +25,29 @@ function [jobs] = stats(jobsdir, varargin)
 % SEE ALSO
 %   oj.reset, oj.report, oj.submit, oj.quickbatch
 
+% ======================================================================
+% Copyright (c) 2012 David Weiss
+% 
+% Permission is hereby granted, free of charge, to any person obtaining
+% a copy of this software and associated documentation files (the
+% "Software"), to deal in the Software without restriction, including
+% without limitation the rights to use, copy, modify, merge, publish,
+% distribute, sublicense, and/or sell copies of the Software, and to
+% permit persons to whom the Software is furnished to do so, subject to
+% the following conditions:
+% 
+% The above copyright notice and this permission notice shall be
+% included in all copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+% NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+% LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+% OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+% ======================================================================
+
 jobsdir = oj.path(jobsdir);
 
 defaults.load_output = true;
@@ -45,7 +68,11 @@ savepwd = pwd;
   
   % Allocate space for all of the job structures, with default values
   jobs = repmat(init,numel(jobfiles), 1);
-  
+
+  if args.progress
+      fprintf('Reading job info: ');
+      t0 = CTimeleft(numel(jobs));
+  end
   for i = 1:numel(jobfiles)
 
     % Get the name of the job
@@ -125,7 +152,7 @@ savepwd = pwd;
     end
 
     if args.progress
-      progress(i, numel(jobs));
+      t0.timeleft();
     end
     
   end
