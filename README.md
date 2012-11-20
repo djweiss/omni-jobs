@@ -91,8 +91,7 @@ the job, put in a directory corresponding to that stage (e.g.,
 Demo
 ------------
 
-- Coming soon: a more complete demo on the full functionality of the
-  toolbox.
+- See a very simple demo in the `demo` subfolder, `simple_job.m`.
 
 
 
