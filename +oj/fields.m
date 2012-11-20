@@ -29,5 +29,5 @@ function [fields] = fields(r)
 
 fields = fieldnames(r);
 for i = 1:numel(fields)
-    fields{i} = oj_decode(fields{i});
+    fields{i} = oj.decode(fields{i});
 end

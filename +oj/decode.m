@@ -32,7 +32,7 @@ f = str;
 if (length(str) < 2)
     return; 
 end
-if str(1:2) ~= 'z_'
+if ~strcmp(str(1:2), 'z_')
     return; 
 end
 

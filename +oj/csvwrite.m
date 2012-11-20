@@ -52,7 +52,7 @@ else
 end
 
 % Get the actual data for writing
-data = oj_get(results, 'mixed', fields{:});
+data = oj.get(results, 'mixed', fields{:});
 
 sumdata = {};
 
@@ -75,7 +75,7 @@ for i = 1:numel(fields)
   titles = fields(i);
   if ncol > 1
     for j = 1:ncol
-      titles{j} = sprintf('%s_%d', fields{i}, j);
+      titles{j} = sprintf('%s_%d', oj.decode(fields{i}), j);
     end
   end
   

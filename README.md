@@ -9,7 +9,7 @@ Setup Instructions
 - Clone the latest source from the github.
 - Initialize the `matlab-utils`
    (https://github.com/djweiss/matlab-utils) submodule using the
-   command: ``` git submodule init ```
+   command: ``` git submodule init ``` followed by ``` git submodule update```
 - Add the `omni-jobs` AND `omni-jobs/matlab-utils` to your MATLAB
    path.
 

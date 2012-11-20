@@ -78,15 +78,15 @@ try
   count = numel(files);
   rows = cell(numel(files),1);
     
-  fprintf('Loading and concatenating %d rows...\n', count);
+  fprintf('Loading and concatenating %d rows: ', count);
   % now count up the number of rows we actually need, and
   % concatenate
-  t0 = clock;  
+  t0 = CTimeleft(numel(rows));  
   n = 0;
   failed = 0;
-  timeleft
+  
   for i = 1:numel(rows);
-    timeleft(numel(files));
+    t0.timeleft();
 
     try
         tmp = load(files(i).name, 'row');    
@@ -139,7 +139,7 @@ try
     end    
   end
   
-  fprintf('\n%d rows successfully loaded.\n', size(results,1));
+  fprintf('%d rows successfully loaded.\n', size(results,1));
   if failed > 0, dispf('%d files failed to load.', failed); end
   
 catch
