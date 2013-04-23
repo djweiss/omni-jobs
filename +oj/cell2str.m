@@ -50,6 +50,7 @@ function [str, colwidth] = cell2str(x, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
  
 n = rows(x);
 m = cols(x);

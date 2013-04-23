@@ -27,6 +27,7 @@ function [ f ] = encode( str )
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 f = str;
 try
     s.(str) = 0;

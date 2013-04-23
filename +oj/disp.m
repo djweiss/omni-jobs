@@ -33,6 +33,7 @@ function [] = disp(results, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
  
 % check fields for special properties
 [maxwidth varargin] = getpropval(varargin, 'maxwidth', 20);

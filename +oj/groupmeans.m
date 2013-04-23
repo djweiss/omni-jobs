@@ -35,6 +35,7 @@ function [groups] = groupmeans(data, fx, fys, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 [grp groups] = oj.group(data, fx{:});
 
 for j = 1:numel(fys)

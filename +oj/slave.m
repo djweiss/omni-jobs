@@ -44,6 +44,7 @@ function [log] = slave(jobsdir, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 defaults.filter = '*';
 defaults.logout = false;
 defaults.force = false;

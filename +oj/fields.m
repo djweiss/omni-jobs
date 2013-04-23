@@ -27,6 +27,7 @@ function [fields] = fields(r)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 fields = fieldnames(r);
 for i = 1:numel(fields)
     fields{i} = oj.decode(fields{i});

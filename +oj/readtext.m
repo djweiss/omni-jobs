@@ -24,6 +24,7 @@ function [str] = readtext(filename, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 [convert varargin] = getpropval(varargin, 'convert', false);
 
 fid = fopen(filename);

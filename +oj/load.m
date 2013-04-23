@@ -48,6 +48,7 @@ function [results] = load(jobsdir, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 defaults.format = 'structarray';
 defaults.loadargs = true;
 defaults.filter = '*.mat';

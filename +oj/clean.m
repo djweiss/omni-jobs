@@ -27,6 +27,7 @@ function [ data ] = clean(jobsdir, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 system(sprintf('rm -rf %s/submitted/*', jobsdir));
 system(sprintf('rm -rf %s/completed/*', jobsdir));
 system(sprintf('rm -rf %s/shell/*', jobsdir));

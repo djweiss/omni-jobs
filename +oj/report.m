@@ -42,6 +42,7 @@ function [stats] = report(stats, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 defaults.usetotal = false;
 defaults.detailed = false;
 defaults.onlyerror = false;

@@ -27,6 +27,7 @@ function [ f ] = decode( str )
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 f = str;
 
 if (length(str) < 2)

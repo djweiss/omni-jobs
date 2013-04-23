@@ -47,6 +47,7 @@ function [] = quickbatch(funcname, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 if isstr(funcname) && isa(varargin{1}, 'function_handle')
     batchname = funcname;
     funcname = varargin{1};

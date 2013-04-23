@@ -39,6 +39,7 @@ function [grpidx, groups, groupnames] = group(sa, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 groups = [];
 stringcols = [];
 strings = {}; % stores string values for unique string columns

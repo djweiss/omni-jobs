@@ -53,6 +53,7 @@ function [] = write(jobsdir, myfunc, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+
 defaults.scriptdir = pwd;
 defaults.myfunc_args = {};
 defaults.jobname = [];
