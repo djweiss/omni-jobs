@@ -1,4 +1,5 @@
 function r = args(s)
+% Load arguments from a set of jobs
 
 % ======================================================================
 % Copyright (c) 2012 David Weiss

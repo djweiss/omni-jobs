@@ -1,4 +1,5 @@
 function [data_chunks] = par_chunk_data(data, N)
+% Call OJ.PAR_CHUNK to directly divide data
 
 % ======================================================================
 % Copyright (c) 2012 David Weiss

@@ -1,4 +1,5 @@
 function priority(s, p)
+% Edit SGE priority of running jobs
 
 % ======================================================================
 % Copyright (c) 2012 David Weiss
