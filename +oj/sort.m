@@ -69,7 +69,7 @@ if numel(sortmodes) ~= numel(fields)
 end
 
 
-sortingdata = oj_get(sa, fields{:});
+sortingdata = oj.get(sa, fields{:});
 
 sortingcol = [];
 

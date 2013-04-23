@@ -68,7 +68,7 @@ function submit(jobsdir, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
-defaults.matlab_exec = 'matlab -nodisplay -nojvm -singleCompThread';
+defaults.matlab_exec = 'matlab -nodisplay -singleCompThread';
 defaults.matlab_startdir = 'auto';
 defaults.sleep = 0; % delay of submission between jobs
 defaults.maxsleep = 0; % stop sleeping after submitting this # of jobs
@@ -76,7 +76,7 @@ defaults.filter = '*';
 defaults.dryrun = false;
 defaults.avoid = []; % node's to avoid
 defaults.q = ''; 
-defaults.qsubargs = '';
+defaults.qsubargs = '-p -100';
 args = propval(varargin, defaults);
 
 if ~isempty(args.q)
@@ -155,7 +155,7 @@ end
 try
     
   fprintf(fid, '#!/bin/bash\n');
-  fprintf(fid, 'unset DISPLAY\n');
+  %fprintf(fid, 'unset DISPLAY\n');
   fprintf(fid, 'cd %s\n', args.matlab_startdir);
   fprintf(fid, 'echo $JOB_ID >> %s/started/%s\n', jobsdir, jobname);
   fprintf(fid, 'echo $HOSTNAME >> %s/started/%s\n', jobsdir, jobname);

@@ -47,12 +47,17 @@ function [] = quickbatch(funcname, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
-    
+if isstr(funcname) && isa(varargin{1}, 'function_handle')
+    batchname = funcname;
+    funcname = varargin{1};
+    varargin = varargin(2:end);
+else
+    [batchname varargin] = getpropval(varargin, 'batchname', [funcname '_batch']);
+end
 [exhaustive varargin] = getpropval(varargin, 'exhaustive', true);
 [autosubmit varargin] = getpropval(varargin, 'autosubmit', false);
 [write_args varargin] = getpropval(varargin, 'write_args', {});
 [submit_args varargin] = getpropval(varargin, 'submit_args', {});
-[batchname varargin] = getpropval(varargin, 'batchname', [funcname '_batch']);
 [overwrite varargin] = getpropval(varargin, 'overwrite', false);
 [append varargin] = getpropval(varargin, 'append', false);
 [fixed_args varargin] = getpropval(varargin, 'fixed_args', {});

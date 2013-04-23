@@ -50,7 +50,7 @@ defaults.force = false;
 defaults.stopat = Inf;
 args = propval(varargin, defaults);
 
-jobsdir = oj_path(jobsdir);
+jobsdir = oj.path(jobsdir);
 
 savepwd = pwd;
 cd(jobsdir);
@@ -91,12 +91,12 @@ for i = 1:numel(jobs)
     % Load the job itself    
     try
       
-      % Remove the 'oj_resubmit' command from the job
-      jobcmd = oj_readtext(sprintf('jobs/%s', jobname));
+      jobcmd = readtext(sprintf('jobs/%s', jobname));
       
       jobcmd = stripline(jobcmd, 'oj_resubmit');
       jobcmd = stripline(jobcmd, 'exit');
       jobcmd = stripline(jobcmd, 'dbstack');
+      jobcmd = stripline(jobcmd, 'dbstop');
      
       cmdstr = [];
       for i = 1:rows(jobcmd)
@@ -145,6 +145,18 @@ for i = 1:numel(jobs)
 end %end job loops
 cd(savepwd);
 
+function [str ] = readtext(filename)
+
+fid = fopen(filename);
+if fid == -1
+  error('Unable to open file ''%s'' for reading.\n', filename);
+end
+
+str = textscan(fid, '%s', 'Delimiter', '\n', 'BufSize', 65536);
+fclose(fid);
+str = str{:};
+      
+str = strvcat(str{:});
 
 function [cmd] = stripline(cmd, str)
 

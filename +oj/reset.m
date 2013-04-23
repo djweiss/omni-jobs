@@ -49,6 +49,10 @@ if nargin == 1
       unixf('rm -vf %s/%s/%s*', jobs(i).jobsdir, dirs{j}, jobs(i).jobname);
     end
     
+    if jobs(i).jobid > 0
+       unixf('qdel %d', jobs(i).jobid); 
+    end
+    
   end
 else
   jobsdir = jobs;

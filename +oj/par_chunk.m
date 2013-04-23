@@ -32,6 +32,15 @@ function [chunk] = par_chunk(nelem, taskid, ntasks)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+if nargin == 2
+    ntasks = taskid;
+    chunk = {};
+    for i = 1:ntasks
+        chunk{i} = oj.par_chunk(nelem, i, ntasks);
+    end
+    return;
+end
+
 % Divide evenly into folds
 chunk = repmat(1:ntasks, 1, ceil(nelem/ntasks));
 chunk = chunk(1:nelem);

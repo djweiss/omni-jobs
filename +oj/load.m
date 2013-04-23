@@ -51,6 +51,7 @@ function [results] = load(jobsdir, varargin)
 defaults.format = 'structarray';
 defaults.loadargs = true;
 defaults.filter = '*.mat';
+defaults.idxrange = [];
 defaults.rmfields = '';
 defaults.proc = '';
 
@@ -59,6 +60,8 @@ args = validate(args);
 
 % save the current working directory
 savepwd = pwd;
+
+[~,jobsdirname] = fileparts(jobsdir);
 
 % check whether or not there is a 'save' subdirectory, or the user
 % has specified the save directory itself
@@ -74,11 +77,14 @@ try
   count = 0;
 
   files = dir(args.filter);
-
+  if ~isempty(args.idxrange)
+      files = files(args.idxrange);
+  end
+    
   count = numel(files);
   rows = cell(numel(files),1);
-    
-  fprintf('Loading and concatenating %d rows: ', count);
+  
+  fprintf('[%s] Loading and concatenating %d rows: ', jobsdirname, count);
   % now count up the number of rows we actually need, and
   % concatenate
   t0 = CTimeleft(numel(rows));  
@@ -105,8 +111,8 @@ try
 
     catch
       e = lasterror;
-      warning(['Unable to load results from file ''%s''.\n\tMessage: ' ...
-               '%s.'], files(i).name, e.message);
+      warning(['[%s] ERROR: Unable to load results from file ''%s''.\n\tMessage: ' ...
+               '%s.'], jobsdirname, files(i).name, e.message);
       failed = failed + 1;
     end
     
@@ -139,8 +145,8 @@ try
     end    
   end
   
-  fprintf('%d rows successfully loaded.\n', size(results,1));
-  if failed > 0, dispf('%d files failed to load.', failed); end
+  if failed > 0, fprintf('[%s] %d rows successfully loaded.\n', jobsdirname, size(results,1)); end
+  if failed > 0, dispf('[%s] %d files failed to load.', jobsdirname, failed); end
   
 catch
   cd(savepwd); % make sure you end up in the same directory

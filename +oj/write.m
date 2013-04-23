@@ -100,7 +100,7 @@ try
   
   % pass in either the my_func args cell or unused (only one is allowed)
   passed_args = {args.myfunc_args{:} unused{:}};
-  save(argsfile, 'passed_args');
+  save(argsfile, 'passed_args', '-v7');
   
 %   for i = 1:numel(passed_args)
 

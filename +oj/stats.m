@@ -50,11 +50,11 @@ function [jobs] = stats(jobsdir, varargin)
 
 jobsdir = oj.path(jobsdir);
 
-defaults.load_output = true;
+defaults.load_output = false;
 defaults.load_errors = true;
 
 defaults.progress = true;
-defaults.check_qstat = false;
+defaults.check_qstat = true;
 defaults.filter = '*';
 
 args = propval(varargin, defaults);
@@ -71,7 +71,7 @@ savepwd = pwd;
 
   if args.progress
       fprintf('Reading job info: ');
-      t0 = CTimeleft(numel(jobs));
+      t0 = CTimeleft(numel(jobs), true);
   end
   for i = 1:numel(jobfiles)
 
@@ -95,12 +95,15 @@ savepwd = pwd;
       jobs(i).start_time = f.date;
 
       if rows(startinfo) > 1
-        jobs(i).jobid = str2num(startinfo(1,:));
-        jobs(i).node = sscanf(startinfo(2,:), ...
-                              'node%d.cluster.private');
+          if ~args.check_qstat
+              jobs(i).jobid = str2num(startinfo{1});
+          else
+              jobs(i).jobid = -1;
+          end
+          jobs(i).host = startinfo{2};
       else
         jobs(i).jobid = -1;
-        jobs(i).node = -1;
+        jobs(i).host = -1;
       end
       
     end        
@@ -160,31 +163,50 @@ savepwd = pwd;
   % Check against qstat if desired
   if args.check_qstat
 
-    idx = find([jobs.running]);
-    for i = idx
-
-      % Check for the existence of this job id #
-      [status,result] = system(sprintf('qstat -s r | grep %d', jobs(i).jobid));
-
-      if status == 1 % job not found: it disappeared!
-        jobs(i).mia = true;
-      end
-    end    
-
-    idx = find([jobs.submitted] & ~[jobs.started]);
-    if ~isempty(idx)
-
-      % Check for the existence of waiting jobs
-      cmd = sprintf('qstat -s p | grep %s', jobs(1).jobname(1:4));
-      [status,result] = system(cmd);
-
-      % No waiting jobs anymore -- these must be broken!
-      if isempty(result)
-        jobs(idx) = oj.set(jobs(idx), 'mia', repmat(true, count(idx), 1));
+      [~,str] = unix('qsf');
+      str = split(str, '\n');
+      for i = 1:numel(jobs)
+          idx = find(strncmp(jobs(i).jobname, str, numel(jobs(i).jobname)));
+          if isempty(idx) && ~jobs(i).completed && ~jobs(i).crashed
+              jobs(i).mia = true;
+          elseif ~isempty(idx)
+              s = split(str{idx});
+              jobs(i).jobid = str2num(s{2}); 
+          end
+          if isempty(jobs(i).jobid)
+              jobs(i).jobid = -1;
+          end
       end
       
-    end    
   end
+%           
+%       %%
+%       
+%     idx = find([jobs.running]);
+%     for i = idx
+% 
+%       % Check for the existence of this job id #
+%       [status,result] = system(sprintf('qstat -s r | grep %d', jobs(i).jobid));
+% 
+%       if status == 1 % job not found: it disappeared!
+%         jobs(i).mia = true;
+%       end
+%     end    
+% 
+%     idx = find([jobs.submitted] & ~[jobs.started]);
+%     if ~isempty(idx)
+% 
+%       % Check for the existence of waiting jobs
+%       cmd = sprintf('qstat -s p | grep %s', jobs(1).jobname(1:4));
+%       [status,result] = system(cmd);
+% 
+%       % No waiting jobs anymore -- these must be broken!
+%       if isempty(result)
+%         jobs(idx) = oj.set(jobs(idx), 'mia', repmat(true, count(idx), 1));
+%       end
+%       
+%     end    
+%   end
   
   % Return to original working directory
   cd(savepwd);
@@ -211,7 +233,7 @@ s.output = 'n/a';
 s.errormsg = 'n/a';
 
 s.jobid = -1;
-s.node = -1;
+s.host = -1;
 
 s.hang_time = -1;
 s.jobsdir = 'n/a';
@@ -228,5 +250,5 @@ str = textscan(fid, '%s', 'Delimiter', '\n', 'BufSize', 65536);
 fclose(fid);
 str = str{:};
       
-str = strvcat(str{:});
+%str = strvcat(str{:});
       

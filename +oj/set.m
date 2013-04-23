@@ -80,6 +80,10 @@ elseif ndims(data) > 2
     end    
   end
   
+elseif numel(data) == 1
+    for i = 1:numel(results)
+        results(i).(fieldname) = data;
+    end
 else
     error('undefined case');
 end
