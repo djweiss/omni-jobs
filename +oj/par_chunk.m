@@ -45,5 +45,6 @@ end
 % Divide evenly into folds
 chunk = repmat(1:ntasks, 1, ceil(nelem/ntasks));
 chunk = chunk(1:nelem);
+chunk = sort(chunk);
 chunk = find(chunk==taskid);
 

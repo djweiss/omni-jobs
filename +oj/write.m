@@ -53,7 +53,7 @@ function [] = write(jobsdir, myfunc, varargin)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
-
+defaults.config = {};
 defaults.scriptdir = pwd;
 defaults.myfunc_args = {};
 defaults.jobname = [];
@@ -77,9 +77,8 @@ if strcmp(funcinfo.type, 'anonymous')
 end
 
 % Write out the file:
-argsfile = sprintf('%s/args/%s.mat',jobsdir, args.jobname);
 jobsfile = sprintf('%s/jobs/%s', jobsdir, args.jobname);
-savefile = sprintf('%s/save/%s.mat', jobsdir, args.jobname);
+argsfile = sprintf('%s/args/%s', jobsdir, args.jobname);
 
 fid = fopen(jobsfile, 'w'); % open file for writing
 if (fid == -1)
@@ -89,66 +88,35 @@ end
 try
   % cd to script working directory
   fprintf(fid, 'cd(''%s'');\n', args.scriptdir);
-
   fprintf(fid, 'dbstop if error;\n');
   fprintf(fid, 'warning off all;\n');
   fprintf(fid, 'try\n');
-  
-  fprintf(fid, '\tload(''%s'');\n', argsfile);
-  
-  % run the user specified function
-  cmdstr = ['\trow = ', func2str(myfunc), '(passed_args{:});\n'];
-  
+
+  fprintf(fid, '\toj.job(''%s'', ''%s'')\n', jobsdir, args.jobname);
+
   % pass in either the my_func args cell or unused (only one is allowed)
   passed_args = {args.myfunc_args{:} unused{:}};
-  save(argsfile, 'passed_args', '-v7');
+  save(argsfile, 'passed_args');
   
-%   for i = 1:numel(passed_args)
-
-%     % build up each argument (either string or numeric)
-%     if isstr(passed_args{i})
-%       passed_args{i} = ['''', passed_args{i}, ''''];
-%     elseif isnumeric(passed_args{i})
-%       passed_args{i} = mat2str(passed_args{i});
-%     else
-%       error('Cannot pass argument %d of type ''%s''', i, ...
-%             class(passed_args{i}));
-%     end
-    
-%     cmdstr = [cmdstr, passed_args{i}, ','];
-%   end
-  
-%   % chop off the last comma and put closing parenthesis
-%   cmdstr = [cmdstr(1:(end-1)) ');\n'];
-  
-  fprintf(fid, cmdstr);
-
-  % finally save output 
-  fprintf(fid, '\tsave(''%s'', ''row'');\n', savefile);
-  fprintf(fid, '\tsystem(''touch %s/completed/%s'');\n', jobsdir,args.jobname);
-
   % Return to the script working directory
   fprintf(fid, '\tcd(''%s'');\n', args.scriptdir);
-  % if args.monitor_peers
-  %   fprintf(fid, ['\toj.resubmit(oj.report(''%s''), ' ...
-  %                 '''kill_time'', %g, ''hang_time'', %g, ' ...
-  %                 '''callback'', ''%s'', ''restart_crashed'', %g, ' ...
-  %                 '''restart_mia'', %g);\n'], ...
-  %           jobsdir, args.kill_time, args.hang_time, args.callback, ...
-  %           args.restart_crashed, args.restart_mia);    
-  % end  
 
   fprintf(fid, 'catch\n');
   fprintf(fid, '\trethrow(lasterror);\n');
   fprintf(fid, 'end;\n');
   fprintf(fid, 'dbstack;\n');
 
-
-  fprintf(fid, 'exit;\n', savefile);
+  fprintf(fid, 'exit;\n');
   
   % close up the file
   fclose(fid);
-  
+
+  % configure the batch job
+  config = oj.config(jobsdir);
+  if isempty(config) || ~isempty(args.config)
+      oj.config(jobsdir, args.config{:}, 'myfunc', func2str(myfunc));
+  end
+
 catch
   
   fclose('all'); % make sure all files are closed

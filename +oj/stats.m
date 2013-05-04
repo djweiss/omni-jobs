@@ -171,6 +171,7 @@ savepwd = pwd;
           if isempty(idx) && ~jobs(i).completed && ~jobs(i).crashed
               jobs(i).mia = true;
           elseif ~isempty(idx)
+              idx = idx(1);
               s = split(str{idx});
               jobs(i).jobid = str2num(s{2}); 
           end

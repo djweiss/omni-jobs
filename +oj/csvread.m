@@ -44,12 +44,17 @@ function [ r ] = csvread(file, varargin)
 
 [delimiter varargin] = getpropval(varargin, 'delimiter', ',');
 [zero_blanks varargin] = getpropval(varargin, 'zero_blanks', true);
+[nmax varargin] = getpropval(varargin, 'read_max', inf);
 [src varargin] = getpropval(varargin, 'src', true);
 
 fid = fopen(file, 'r');
 if fid < 0
     error('Unable to open file: %s', file);
 end
+
+[~,wc] = unixf('wc %s | awk ''{print $1}''', file);
+wc = str2num(wc)-1;
+wc = min(nmax, wc);
 
 % Get field names from header of file
 fields = {};
@@ -68,8 +73,9 @@ nfields = numel(fields);
 % Load the data from the file
 count = 1;
 dataline = fgetl(fid);
-while ischar(dataline)
-
+t0 = CTimeleft('reading lines: ', wc);
+while ischar(dataline) && count <= wc
+    t0.timeleft();
     skip = false;
     for j = 1:nfields
         [token, dataline] = strtok(dataline, delimiter);
