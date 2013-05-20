@@ -77,7 +77,7 @@ defaults.filter = '*';
 defaults.dryrun = false;
 defaults.avoid = []; % node's to avoid
 defaults.q = ''; 
-defaults.qsubargs = '-p -100';
+defaults.qsubargs = ''; %'-p -100';
 args = propval(varargin, defaults);
 
 if ~isempty(args.q)

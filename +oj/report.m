@@ -104,47 +104,48 @@ end
 wall_time = etime(datevec(finish_time), datevec(start_time));
 
 if all([stats.completed]) 
-    fprintf('[%s] Started: %s, Completed: %s, Elapsed: %s, ', jobsdirname, datestr(start_time), datestr(finish_time), sec2timestr(wall_time));
+    fprintf('[%s] Started: %s, Completed: %s, Elapsed: %s', jobsdirname, datestr(start_time), datestr(finish_time), sec2timestr(wall_time));
 else
-    fprintf('[%s] Started: %s, Last updated: %s, Elapsed: %s\n',jobsdirname, datestr(start_time), datestr(finish_time), sec2timestr(wall_time));
+    fprintf('[%s] Started: %s, Last updated: %s, Elapsed: %s',jobsdirname, datestr(start_time), datestr(finish_time), sec2timestr(wall_time));
 end
 
 if (count([stats.completed]) > 0)
-  
-% number of jobs remaining
-if args.usetotal
-  totaljobs = numel(stats);
-else
-  totaljobs = count([stats.submitted]);
-end
-
-% average running time of completed jobs:
-idx = find([stats.completed]);
-avgtime = mean([stats(idx).run_time]);
-
-inqueue = totaljobs-sum([stats.crashed])-sum([stats.completed])-sum([stats.running]); 
-nslots = sum([stats.running]);
-
-itersleft = ceil(inqueue/nslots);
-
-iterstimeleft = avgtime*itersleft;
-runningtimeleft = (avgtime*sum([stats.running]) - sum([stats([stats.running]).run_time]))./sum([stats.running]);
-
-
-if sum([stats.completed]>0)
+    
+    % number of jobs remaining
+    if args.usetotal
+        totaljobs = numel(stats);
+    else
+        totaljobs = count([stats.submitted]);
+    end
+    
+    % average running time of completed jobs:
+    idx = find([stats.completed]);
+    avgtime = mean([stats(idx).run_time]);
+    
+    inqueue = totaljobs-sum([stats.crashed])-sum([stats.completed])-sum([stats.running]);
+    nslots = sum([stats.running]);
+    
+    itersleft = ceil(inqueue/nslots);
+    
+    iterstimeleft = avgtime*itersleft;
+    runningtimeleft = (avgtime*sum([stats.running]) - sum([stats([stats.running]).run_time]))./sum([stats.running]);
+    
     if sum([stats.running])>0
-        fprintf('[%s] ETA in approximately %s (%s avg time x %d batch starts = %s + %s batch remaining)\n', ...
+        fprintf('\n[%s] ETA in approximately %s (%s avg time x %d batch starts = %s + %s batch remaining)\n', ...
             jobsdirname, sec2timestr(iterstimeleft+runningtimeleft), sec2timestr(avgtime), itersleft, ...
             sec2timestr(iterstimeleft), sec2timestr(runningtimeleft));
     else
-        fprintf('[%s] Avg time: %s\n', jobsdirname, sec2timestr(avgtime));
+        fprintf(', Avg time: %s\n', sec2timestr(avgtime));
     end
+    
+else
+    fprintf('\n');
 end
 
-    
+
 % % compute estimated time remaining:
 % totaltime = avgtime * remainingjobs;
-% 
+%
 % % adjust for current runtime
 % idx = find([stats.running]);
 % totaltime = totaltime - sum([stats(idx).run_time]);
@@ -186,7 +187,7 @@ end
 %     fprintf('\nAvg runtime: %g minutes.\n', avgtime/60);
 % end
 
-end
+%end
 
 function printjob( stats )
 
