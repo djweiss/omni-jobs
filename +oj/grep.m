@@ -1,4 +1,4 @@
-function grep(s, pattern, n)
+function grep(s, pattern, n, extraargs)
 % Grep through stdout of jobs
 
 % ======================================================================
@@ -24,6 +24,9 @@ function grep(s, pattern, n)
 % WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 % ======================================================================
 
+if nargin<4
+    extraargs = '';
+end
 if nargin<3
     n = 1;
 end
@@ -36,7 +39,10 @@ for i = 1:numel(s)
         continue;
     end
     fprintf('[%s] ', s(i).jobname);
-    [~,m] = unixf('grep %s %s/stdout/%s | tail -n %d', pattern, s(i).jobsdir, s(i).jobname, n);
+    [~,m] = unixf('grep %s %s %s/stdout/%s | tail -n %d', extraargs, pattern, s(i).jobsdir, s(i).jobname, n);
+    if sum(m==10)>1
+        fprintf(':\n');
+    end
     fprintf('%s', m);
     if isempty(m)
         fprintf('\n');
