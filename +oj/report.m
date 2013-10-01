@@ -128,8 +128,11 @@ if (count([stats.completed]) > 0)
     itersleft = ceil(inqueue/nslots);
     
     iterstimeleft = avgtime*itersleft;
-    runningtimeleft = (avgtime*sum([stats.running]) - sum([stats([stats.running]).run_time]))./sum([stats.running]);
-    
+    %runningtimeleft = (avgtime*sum([stats.running]) - sum([stats([stats.running]).run_time]))./sum([stats.running]);
+    runningtimeleft = avgtime-min([stats([stats.running]).run_time]); 
+    if runningtimeleft < 0
+        runningtimeleft = max([stats([stats.completed]).run_time])-min([stats([stats.running]).run_time]);
+    end
     if sum([stats.running])>0
         fprintf('\n[%s] ETA in approximately %s (%s avg time x %d batch starts = %s + %s batch remaining)\n', ...
             jobsdirname, sec2timestr(iterstimeleft+runningtimeleft), sec2timestr(avgtime), itersleft, ...
